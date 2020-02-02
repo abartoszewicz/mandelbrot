@@ -13,6 +13,7 @@ import static bartosan.constant.ViewParameters.WINDOW_WIDTH;
 import static java.lang.Math.min;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 import bartosan.algo.Calculator;
 import bartosan.algo.CalculatorFullFrame;
@@ -24,8 +25,6 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -78,7 +77,7 @@ public class Main extends Application
 
     private static DrawAreaRect2D animateDrawArea(final long l)
     {
-        DrawAreaRect2D result = null;
+        DrawAreaRect2D result;
         if (l < ANIMATION_HALF_LENGTH)
         {
             result = MAX_AREA_2D;
@@ -221,14 +220,7 @@ public class Main extends Application
         primaryStage.setTitle("Mandelbrot Set");
         primaryStage.setScene(scene);
         primaryStage.show();
-        playButton.setOnAction(new EventHandler<ActionEvent>()
-        {
-            @Override
-            public void handle(ActionEvent event)
-            {
-                doTest();
-            }
-        });
+        playButton.setOnAction(event -> doTest());
         redraw();
 
     }
@@ -246,11 +238,7 @@ public class Main extends Application
                 implementationNames.add(impl.getSimpleName());
             }
         }
-        catch (ClassNotFoundException e)
-        {
-            e.printStackTrace();
-        }
-        catch (IOException e)
+        catch (ClassNotFoundException | IOException e)
         {
             e.printStackTrace();
         }
@@ -261,14 +249,9 @@ public class Main extends Application
             SingleSelectionModel ssm = implementationCombo.getSelectionModel();
             ssm.select(currentImplementation.getClass().getName());
         }
-        implementationCombo.setOnAction(new EventHandler<ActionEvent>()
-        {
-            @Override
-            public void handle(ActionEvent event)
-            {
-                String selection = (String) implementationCombo.getSelectionModel().getSelectedItem();
-                changeImplementation(selection);
-            }
+        implementationCombo.setOnAction(event -> {
+            String selection = (String) implementationCombo.getSelectionModel().getSelectedItem();
+            changeImplementation(selection);
         });
 
     }
@@ -280,18 +263,10 @@ public class Main extends Application
         {
             Class newImplementation = ClassLoader.getSystemClassLoader().loadClass(className);
             {
-                currentImplementation = (Calculator) newImplementation.newInstance();
+                currentImplementation = (Calculator) newImplementation.getDeclaredConstructor().newInstance();
             }
         }
-        catch (ClassNotFoundException e)
-        {
-            e.printStackTrace();
-        }
-        catch (IllegalAccessException e)
-        {
-            e.printStackTrace();
-        }
-        catch (InstantiationException e)
+        catch (ClassNotFoundException | IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e)
         {
             e.printStackTrace();
         }
