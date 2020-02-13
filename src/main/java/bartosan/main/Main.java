@@ -222,7 +222,6 @@ public class Main extends Application
         primaryStage.show();
         playButton.setOnAction(event -> doTest());
         redraw();
-
     }
 
     private void fillImplementationCombo(final ComboBox implementationCombo)
@@ -235,7 +234,7 @@ public class Main extends Application
             implementations = ReflectionHelper.getClasses("bartosan.algo.impl", interfaceClass);
             for (Class impl : implementations)
             {
-                implementationNames.add(impl.getSimpleName());
+                implementationNames.add(impl.getName());
             }
         }
         catch (ClassNotFoundException | IOException e)
