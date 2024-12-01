@@ -21,11 +21,31 @@ public class ViewParameters
         CENTER_X + MAX_AREA, CENTER_Y + MAX_AREA * 0.75);
     public static DrawAreaRect2D MIN_AREA_2D = new DrawAreaRect2D(CENTER_X - MIN_AREA, CENTER_Y - MIN_AREA * 0.75,
         CENTER_X + MIN_AREA, CENTER_Y + MIN_AREA * 0.75);
-    public static int WINDOW_WIDTH = 800;
-    public static int WINDOW_HEIGHT = 600;
+    public static int WINDOW_WIDTH = 640 ;
+    public static int WINDOW_HEIGHT = 480;
 
     private ViewParameters()
     {
+    }
+
+    public static void calculateColorMap()
+    {
+
+        for (int i = 0; i < MAX_CONVERGENCE_DEPTH + 1; i++)
+        {
+            double hueAngle = 30.0 * Math.PI * i / MAX_CONVERGENCE_DEPTH;
+
+            //HSV to RGB conversion, with max saturation and value
+
+            int red = (int) ((Math.max(-0.5, Math.min(0.5, Math.sin(hueAngle + Math.PI * 3.0 / 6.0))) + 0.5) * 255);
+            int green = (int) ((Math.max(-0.5, Math.min(0.5, Math.sin(hueAngle + Math.PI * 11.0 / 6.0))) + 0.5) * 255);
+            int blue = (int) ((Math.max(-0.5, Math.min(0.5, Math.sin(hueAngle + Math.PI * 7.0 / 6.0))) + 0.5) * 255);
+            int alpha = 0xff;
+
+            int argbColor = (alpha << 24) | (red << 16) | (green << 8) | (blue);
+            CONVERGENCE_TO_RGB_MAP[i] = argbColor;
+        }
+        CONVERGENCE_TO_RGB_MAP[0] = 0xff000000; //black for 0;
     }
 
 }

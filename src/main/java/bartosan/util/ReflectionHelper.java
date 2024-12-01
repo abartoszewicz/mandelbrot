@@ -41,6 +41,28 @@ public class ReflectionHelper
         return classes.toArray(new Class[classes.size()]);
     }
 
+    public static <T> List<T> getInstancesOf(String packageName, Class<T> implementingInterface) {
+        try {
+            Class[] rawClasses = getClasses(packageName, implementingInterface);
+            List<T> instances = new ArrayList<>();
+            for (int i = 0; i < rawClasses.length; i++) {
+                try {
+                    T newInstance = (T) rawClasses[i].newInstance();
+                    instances.add(newInstance);
+                } catch (Exception e) {
+                    System.out.println("Could not create an instance of " + rawClasses[i].getSimpleName());
+                    System.out.println(e.getMessage());
+                }
+            }
+
+            return instances;
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
      * Recursive method used to find all classes in a given directory and subdirs.
      *

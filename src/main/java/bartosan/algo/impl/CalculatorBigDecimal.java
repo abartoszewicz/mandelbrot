@@ -1,5 +1,7 @@
 package bartosan.algo.impl;
 
+import bartosan.algo.Calculator;
+
 import java.math.BigDecimal;
 
 

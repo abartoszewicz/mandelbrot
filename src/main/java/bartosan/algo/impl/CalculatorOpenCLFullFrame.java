@@ -22,6 +22,7 @@ import static org.jocl.CL.clGetPlatformIDs;
 import static org.jocl.CL.clGetPlatformInfo;
 import static org.jocl.CL.clSetKernelArg;
 
+import bartosan.algo.Calculator;
 import org.jocl.CL;
 import org.jocl.Pointer;
 import org.jocl.Sizeof;
@@ -35,11 +36,10 @@ import org.jocl.cl_platform_id;
 import org.jocl.cl_program;
 import org.jocl.cl_queue_properties;
 
-import bartosan.algo.CalculatorFullFrame;
 import bartosan.algo.DrawAreaRect2D;
 
 
-public class CalculatorOpenCLFullFrame implements CalculatorFullFrame
+public class CalculatorOpenCLFullFrame implements Calculator
 {
     private static String programSource =
         "__kernel void fullFrameMandelbrot(__global const float *inputData,\n"
@@ -212,7 +212,7 @@ public class CalculatorOpenCLFullFrame implements CalculatorFullFrame
 
     }
 
-    //@Override
+    @Override
     public int checkConvergence(final double ci, final double c, final int convergenceSteps)
     {
         return 0;
