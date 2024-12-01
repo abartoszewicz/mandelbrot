@@ -31,6 +31,7 @@ import static org.jocl.CL.clSetKernelArg;
 
 import java.util.Arrays;
 
+import bartosan.algo.Calculator;
 import org.jocl.CL;
 import org.jocl.Pointer;
 import org.jocl.Sizeof;
@@ -45,7 +46,7 @@ import org.jocl.cl_program;
 import org.jocl.cl_queue_properties;
 
 
-public class CalculatorOpenCL// implements Calculator
+public class CalculatorOpenCL implements Calculator
 {
     private static String programSourceTest =
         "__kernel void " +

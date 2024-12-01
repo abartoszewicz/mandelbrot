@@ -5,7 +5,7 @@ import bartosan.algo.Calculator;
 
 public class CalculatorDouble implements Calculator
 {
-    @Override
+  //  @Override
     public int checkConvergence(final double ci, final double c, final int convergenceSteps)
     {
         double z = 0;
