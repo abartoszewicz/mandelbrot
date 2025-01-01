@@ -41,7 +41,7 @@ import bartosan.algo.DrawAreaRect2D;
 
 public class CalculatorOpenCLFullFrame implements Calculator
 {
-    private static String programSource =
+    private static final String programSource =
         "__kernel void fullFrameMandelbrot(__global const float *inputData,\n"
             + "                         __global int *result)\n"
             + "{\n"
@@ -93,7 +93,7 @@ public class CalculatorOpenCLFullFrame implements Calculator
         CL.setExceptionsEnabled(true);
 
         // Obtain the number of platforms
-        int numPlatformsArray[] = new int[1];
+        int[] numPlatformsArray = new int[1];
         clGetPlatformIDs(0, null, numPlatformsArray);
         int numPlatforms = numPlatformsArray[0];
 
@@ -102,15 +102,15 @@ public class CalculatorOpenCLFullFrame implements Calculator
         final int deviceIndex = 0;
 
         // Obtain a platform ID
-        cl_platform_id platforms[] = new cl_platform_id[numPlatforms];
+        cl_platform_id[] platforms = new cl_platform_id[numPlatforms];
         clGetPlatformIDs(platforms.length, platforms, null);
         cl_platform_id platform = platforms[platformIndex];
         System.out.println("Found OpenCL platforms:");
         for (int i = 0; i < numPlatforms; i++)
         {
-            long size[] = new long[1];
+            long[] size = new long[1];
             clGetPlatformInfo(platforms[i], CL_PLATFORM_VENDOR, 0, null, size);
-            byte buffer[] = new byte[(int) size[0]];
+            byte[] buffer = new byte[(int) size[0]];
             clGetPlatformInfo(platforms[i], CL_PLATFORM_VENDOR, buffer.length, Pointer.to(buffer), null);
             System.out.println(getString(platforms[i], CL_PLATFORM_VENDOR)
                     + " " + getString(platforms[i], CL_PLATFORM_VERSION)
@@ -123,12 +123,12 @@ public class CalculatorOpenCLFullFrame implements Calculator
         contextProperties.addProperty(CL_CONTEXT_PLATFORM, platform);
 
         // Obtain the number of devices for the platform
-        int numDevicesArray[] = new int[1];
+        int[] numDevicesArray = new int[1];
         clGetDeviceIDs(platform, deviceType, 0, null, numDevicesArray);
         int numDevices = numDevicesArray[0];
 
         // Obtain a device ID
-        cl_device_id devices[] = new cl_device_id[numDevices];
+        cl_device_id[] devices = new cl_device_id[numDevices];
         clGetDeviceIDs(platform, deviceType, numDevices, devices, null);
         cl_device_id device = devices[deviceIndex];
 
@@ -158,9 +158,9 @@ public class CalculatorOpenCLFullFrame implements Calculator
 
     private static String getString(cl_platform_id platform, int paramName)
     {
-        long size[] = new long[1];
+        long[] size = new long[1];
         clGetPlatformInfo(platform, paramName, 0, null, size);
-        byte buffer[] = new byte[(int) size[0]];
+        byte[] buffer = new byte[(int) size[0]];
         clGetPlatformInfo(platform, paramName,
             buffer.length, Pointer.to(buffer), null);
         return new String(buffer, 0, buffer.length - 1);
@@ -177,7 +177,7 @@ public class CalculatorOpenCLFullFrame implements Calculator
         inputData[5] = height;
         inputData[6] = convergenceSteps;
         clEnqueueWriteBuffer(commandQueue, srcMemInputData, true, 0,
-            inputData.length * Sizeof.cl_float, Pointer.to(inputData), 0, null, null);
+                (long) inputData.length * Sizeof.cl_float, Pointer.to(inputData), 0, null, null);
 
         Pointer resultPointer = Pointer.to(result);
 
@@ -191,7 +191,7 @@ public class CalculatorOpenCLFullFrame implements Calculator
         clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(dstMemResult));
 
         // Set the work-item dimensions
-        long global_work_size[] = new long[2];
+        long[] global_work_size = new long[2];
         global_work_size[0] = width;
         global_work_size[1] = height;
 
@@ -200,7 +200,7 @@ public class CalculatorOpenCLFullFrame implements Calculator
             global_work_size, null, 0, null, null);
         // Read the output data
         clEnqueueReadBuffer(commandQueue, dstMemResult, CL_TRUE, 0,
-            result.length * Sizeof.cl_int,
+                (long) result.length * Sizeof.cl_int,
             Pointer.to(result), 0, null, null);
     }
 
@@ -208,7 +208,7 @@ public class CalculatorOpenCLFullFrame implements Calculator
     {
         dstMemResult = clCreateBuffer(context,
             CL_MEM_WRITE_ONLY,
-            Sizeof.cl_int * width * height, hostPointer, null);
+                (long) Sizeof.cl_int * width * height, hostPointer, null);
 
     }
 

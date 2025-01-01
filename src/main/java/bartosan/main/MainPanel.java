@@ -45,12 +45,7 @@ public class MainPanel extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
       //  System.out.println("paint on panel");
-        g.drawImage(bufferedImage, 0, 0, new ImageObserver() {
-            @Override
-            public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
-                return false;
-            }
-        });
+        g.drawImage(bufferedImage, 0, 0, (img, infoflags, x, y, width, height) -> false);
     }
 
     @Override
@@ -71,6 +66,6 @@ public class MainPanel extends JPanel {
     }
 
     public long getPixelCount() {
-        return width * height;
+        return (long) width * height;
     }
 }

@@ -48,7 +48,7 @@ import org.jocl.cl_queue_properties;
 
 public class CalculatorOpenCL implements Calculator
 {
-    private static String programSourceTest =
+    private static final String programSourceTest =
         "__kernel void " +
             "checkConvergence(__global const float *coords," +
             "             __global const int *steps," +
@@ -57,7 +57,7 @@ public class CalculatorOpenCL implements Calculator
             "result[0] = (int)(coords[0] * coords[1]) + steps[0];" +
             "}";
 
-    private static String programSource =
+    private static final String programSource =
         "__kernel void " +
             "checkConvergence(__global const float *coords," +
             "             __global const int *steps," +
@@ -81,7 +81,7 @@ public class CalculatorOpenCL implements Calculator
             + "    }\n"
             + "    *result = stepsCount;\n  "
             + "}";
-    private static String programSample =
+    private static final String programSample =
         "__kernel void " +
             "sampleKernel(__global const float *a," +
             "             __global const float *b," +
@@ -111,7 +111,7 @@ public class CalculatorOpenCL implements Calculator
         CL.setExceptionsEnabled(true);
 
         // Obtain the number of platforms
-        int numPlatformsArray[] = new int[1];
+        int[] numPlatformsArray = new int[1];
         clGetPlatformIDs(0, null, numPlatformsArray);
         int numPlatforms = numPlatformsArray[0];
 
@@ -120,15 +120,15 @@ public class CalculatorOpenCL implements Calculator
         final int deviceIndex = 0;
 
         // Obtain a platform ID
-        cl_platform_id platforms[] = new cl_platform_id[numPlatforms];
+        cl_platform_id[] platforms = new cl_platform_id[numPlatforms];
         clGetPlatformIDs(platforms.length, platforms, null);
         cl_platform_id platform = platforms[platformIndex];
         System.out.println("Found OpenCL platforms:");
         for (int i = 0; i < numPlatforms; i++)
         {
-            long size[] = new long[1];
+            long[] size = new long[1];
             clGetPlatformInfo(platforms[i], CL_PLATFORM_VENDOR, 0, null, size);
-            byte buffer[] = new byte[(int) size[0]];
+            byte[] buffer = new byte[(int) size[0]];
             clGetPlatformInfo(platforms[i], CL_PLATFORM_VENDOR, buffer.length, Pointer.to(buffer), null);
             System.out.println(getString(platforms[i], CL_PLATFORM_VENDOR) + " " +
                 getString(platforms[i], CL_PLATFORM_VERSION) + " " +
@@ -140,12 +140,12 @@ public class CalculatorOpenCL implements Calculator
         contextProperties.addProperty(CL_CONTEXT_PLATFORM, platform);
 
         // Obtain the number of devices for the platform
-        int numDevicesArray[] = new int[1];
+        int[] numDevicesArray = new int[1];
         clGetDeviceIDs(platform, deviceType, 0, null, numDevicesArray);
         int numDevices = numDevicesArray[0];
 
         // Obtain a device ID
-        cl_device_id devices[] = new cl_device_id[numDevices];
+        cl_device_id[] devices = new cl_device_id[numDevices];
         clGetDeviceIDs(platform, deviceType, numDevices, devices, null);
         cl_device_id device = devices[deviceIndex];
 
@@ -182,9 +182,9 @@ public class CalculatorOpenCL implements Calculator
 
     private static String getString(cl_platform_id platform, int paramName)
     {
-        long size[] = new long[1];
+        long[] size = new long[1];
         clGetPlatformInfo(platform, paramName, 0, null, size);
-        byte buffer[] = new byte[(int) size[0]];
+        byte[] buffer = new byte[(int) size[0]];
         clGetPlatformInfo(platform, paramName,
             buffer.length, Pointer.to(buffer), null);
         return new String(buffer, 0, buffer.length - 1);
@@ -194,9 +194,9 @@ public class CalculatorOpenCL implements Calculator
     {
         // Create input- and output data
         int n = 10;
-        float srcArrayA[] = new float[n];
-        float srcArrayB[] = new float[n];
-        float dstArray[] = new float[n];
+        float[] srcArrayA = new float[n];
+        float[] srcArrayB = new float[n];
+        float[] dstArray = new float[n];
         for (int i = 0; i < n; i++)
         {
             srcArrayA[i] = i;
@@ -216,12 +216,12 @@ public class CalculatorOpenCL implements Calculator
         CL.setExceptionsEnabled(true);
 
         // Obtain the number of platforms
-        int numPlatformsArray[] = new int[1];
+        int[] numPlatformsArray = new int[1];
         clGetPlatformIDs(0, null, numPlatformsArray);
         int numPlatforms = numPlatformsArray[0];
 
         // Obtain a platform ID
-        cl_platform_id platforms[] = new cl_platform_id[numPlatforms];
+        cl_platform_id[] platforms = new cl_platform_id[numPlatforms];
         clGetPlatformIDs(platforms.length, platforms, null);
         cl_platform_id platform = platforms[platformIndex];
 
@@ -230,12 +230,12 @@ public class CalculatorOpenCL implements Calculator
         contextProperties.addProperty(CL_CONTEXT_PLATFORM, platform);
 
         // Obtain the number of devices for the platform
-        int numDevicesArray[] = new int[1];
+        int[] numDevicesArray = new int[1];
         clGetDeviceIDs(platform, deviceType, 0, null, numDevicesArray);
         int numDevices = numDevicesArray[0];
 
         // Obtain a device ID
-        cl_device_id devices[] = new cl_device_id[numDevices];
+        cl_device_id[] devices = new cl_device_id[numDevices];
         clGetDeviceIDs(platform, deviceType, numDevices, devices, null);
         cl_device_id device = devices[deviceIndex];
 
@@ -277,7 +277,7 @@ public class CalculatorOpenCL implements Calculator
         clSetKernelArg(kernel, a++, Sizeof.cl_mem, Pointer.to(dstMem));
 
         // Set the work-item dimensions
-        long global_work_size[] = new long[] {n};
+        long[] global_work_size = new long[] {n};
 
         // Execute the kernel
         clEnqueueNDRangeKernel(commandQueue, kernel, 1, null,
@@ -311,10 +311,6 @@ public class CalculatorOpenCL implements Calculator
             }
         }
         System.out.println("Test " + (passed ? "PASSED" : "FAILED"));
-        if (n <= 10)
-        {
-            System.out.println("Result: " + Arrays.toString(dstArray));
-        }
 
     }
 
@@ -333,7 +329,7 @@ public class CalculatorOpenCL implements Calculator
         coordinates[1] = (float) c;
         clEnqueueWriteBuffer(commandQueue, srcMemCoordinates, true, 0, 2 * Sizeof.cl_float, Pointer.to(coordinates), 0, null, null);
         steps[0] = convergenceSteps;
-        clEnqueueWriteBuffer(commandQueue, srcMemSteps, true, 0, 1 * Sizeof.cl_int, Pointer.to(steps), 0, null, null);
+        clEnqueueWriteBuffer(commandQueue, srcMemSteps, true, 0, Sizeof.cl_int, Pointer.to(steps), 0, null, null);
 
         //3 parameters:
         clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(this.srcMemCoordinates));
@@ -341,7 +337,7 @@ public class CalculatorOpenCL implements Calculator
         clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(this.dstMemResult));
 
         // Set the work-item dimensions
-        long global_work_size[] = new long[] {1};
+        long[] global_work_size = new long[] {1};
 
         // Execute the kernel
         clEnqueueNDRangeKernel(commandQueue, kernel, 1, null,
@@ -349,7 +345,7 @@ public class CalculatorOpenCL implements Calculator
 
         // Read the output data
         clEnqueueReadBuffer(commandQueue, dstMemResult, CL_TRUE, 0,
-            result.length * Sizeof.cl_int, Pointer.to(result), 0, null, null);
+                (long) result.length * Sizeof.cl_int, Pointer.to(result), 0, null, null);
 
         return result[0];
     }
